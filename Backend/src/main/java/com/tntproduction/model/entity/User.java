@@ -2,11 +2,13 @@ package com.tntproduction.model.entity;
 
 import com.tntproduction.model.entity.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,16 +27,29 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "first_name")
+    @NotBlank(message = "First name is required")
+    @Size(max = 100, message = "First name can't exceed 100 characters")
     private String firstName;
 
+    @Column(name = "last_name")
+    @NotBlank(message = "Last name is required")
+    @Size(max = 100, message = "Last name can't exceed 100 characters")
     private String lastName;
 
+    @Column(name = "password",nullable = false)
+    @NotBlank(message = "password is required")
+    @Size(max = 100, message = "Password can't exceed 100 characters")
     private String password;
     @Column(name = "email", nullable = false, unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     //TODO : here handle the exception when someone trying to enter an email already exists in the db
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    @NotBlank(message = "Role is required")
     private Role role;
 
     @Override
