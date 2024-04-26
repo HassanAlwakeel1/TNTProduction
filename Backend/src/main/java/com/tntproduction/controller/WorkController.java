@@ -18,7 +18,7 @@ public class WorkController {
     private final WorkService workService;
 
     @PostMapping("/add-update")
-    public ResponseEntity<String> createUpdateWork(@ModelAttribute WorkDTO workDTO){
+    public ResponseEntity<?> createUpdateWork(@ModelAttribute WorkDTO workDTO){
         return workService.addOrUpdateWork(workDTO);
     }
 

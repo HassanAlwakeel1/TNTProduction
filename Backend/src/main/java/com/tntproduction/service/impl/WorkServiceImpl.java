@@ -1,5 +1,7 @@
 package com.tntproduction.service.impl;
 
+import com.tntproduction.model.customresponse.CustomErrorResponse;
+import com.tntproduction.model.customresponse.CustomResponse;
 import com.tntproduction.model.dto.WorkDTO;
 import com.tntproduction.model.entity.Work;
 import com.tntproduction.model.entity.enums.Department;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +27,7 @@ public class WorkServiceImpl implements WorkService {
     private final WorkRepository workRepository;
 
     @Override
-    public ResponseEntity<String> addOrUpdateWork(WorkDTO workDTO) {
+    public ResponseEntity<?> addOrUpdateWork(WorkDTO workDTO) {
         if (workDTO.getId() != null){
             Optional<Work> optionalWork = workRepository.findById(workDTO.getId());
 
@@ -33,13 +36,31 @@ public class WorkServiceImpl implements WorkService {
                 Work existingWork  = optionalWork.get();
                 updateWorkFromDTO(existingWork,workDTO);
                 workRepository.save(existingWork);
-                return ResponseEntity.ok("Work updated successfully");
+
+                CustomResponse<List> response = new CustomResponse<>();
+                response.setStatus(200);
+                response.setMessage("Work Updated");
+                response.setData(Collections.emptyList());
+
+                return ResponseEntity.ok(response);
             }else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Work not found with ID : " + workDTO.getId());
+
+                CustomErrorResponse customErrorResponse = new CustomErrorResponse();
+                customErrorResponse.setStatus(404);
+                customErrorResponse.setMessage("The requested resource was not found");
+                customErrorResponse.setError("Not Found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(customErrorResponse);
             }
         }else {
             saveNewWorkFromDTO(workDTO);
-            return ResponseEntity.ok("Work added successfully");
+
+            CustomResponse<List> response = new CustomResponse<>();
+            response.setStatus(200);
+            response.setMessage("Work Added");
+            response.setData(Collections.emptyList());
+
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -54,7 +75,7 @@ public class WorkServiceImpl implements WorkService {
 
     @Override
     public List<Work> getAllWorks() {
-        return  workRepository.findAll();
+        return workRepository.findAll();
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface WorkService {
-    ResponseEntity<String> addOrUpdateWork(WorkDTO workDTO);
+    ResponseEntity<?> addOrUpdateWork(WorkDTO workDTO);
 
     ResponseEntity<String> deleteWork(Long id);
 
